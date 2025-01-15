@@ -4,6 +4,9 @@ sprites.src = './sprites.png';
 const canvas = document.querySelector('#game-canvas');
 const contexto = canvas.getContext('2d');
 
+contexto.fillStyle = '#70c5ce';
+contexto.fillRect(0,0, canvas.width, canvas.height)
+
 
 const flappyBird = {
     spriteX: 0,
@@ -76,7 +79,6 @@ const flappyBird = {
 
                 }
             }
-
 
 
 function loop(){
