@@ -80,12 +80,49 @@ const flappyBird = {
                 }
             }
 
+            const inicio = {
+                spriteX: 125,
+                spriteY: 0,
+                largura: 185,
+                altura: 153,
+                x: 65,
+                y: 90,
+                desenhainicio(){
+                    contexto.drawImage(
+                        sprites,
+                        inicio.spriteX, inicio.spriteY,
+                        inicio.largura, inicio.altura,
+                        inicio.x, inicio.y,
+                        inicio.largura, inicio.altura,
+                        );
+                    }
+                }
+        
+                const start = {
+                    spriteX: 200,
+                    spriteY: 320,
+                    largura: 87,
+                    altura: 32,
+                    x: 111,
+                    y: 270,
+                    desenhastart(){
+                        contexto.drawImage(
+                            sprites,
+                            start.spriteX, start.spriteY,
+                            start.largura, start.altura,
+                            start.x, start.y,
+                            start.largura, start.altura,
+                            );
+                        }
+                    }
 
 function loop(){
         
     flappyBird.desenha();
     chao.desenhachao();
     planoFundo.desenhafundo();
+    inicio.desenhainicio();
+    start.desenhastart();
         
     requestAnimationFrame(loop);
 }
