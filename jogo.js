@@ -4,6 +4,10 @@ sprites.src = './sprites.png';
 const canvas = document.querySelector('#game-canvas');
 const contexto = canvas.getContext('2d');
 
+let chaoX = 0;
+let planoFundoX = 0;
+let tubosX = 220;
+
 const flappyBird = {
   spriteX: 0,
   spriteY: 0,
@@ -43,16 +47,22 @@ const chao = {
       sprites,
       chao.spriteX, chao.spriteY,
       chao.largura, chao.altura,
-      chao.x, chao.y,
+      chaoX, chao.y,
       chao.largura, chao.altura
     );
     contexto.drawImage(
       sprites,
       chao.spriteX, chao.spriteY,
       chao.largura, chao.altura,
-      chao.x + chao.largura, chao.y,
+      chaoX + chao.largura, chao.y,
       chao.largura, chao.altura
     );
+  },
+  atualizar() {
+    chaoX -= 2;
+    if (chaoX <= -chao.largura) {
+      chaoX = 0; 
+    }
   }
 };
 
@@ -68,18 +78,24 @@ const planoFundo = {
       sprites,
       planoFundo.spriteX, planoFundo.spriteY,
       planoFundo.largura, planoFundo.altura,
-      planoFundo.x, planoFundo.y,
+      planoFundoX, planoFundo.y,
       planoFundo.largura, planoFundo.altura
     );
     contexto.drawImage(
       sprites,
       planoFundo.spriteX, planoFundo.spriteY,
       planoFundo.largura, planoFundo.altura,
-      planoFundo.x + planoFundo.largura, planoFundo.y,
+      planoFundoX + planoFundo.largura, planoFundo.y,
       planoFundo.largura, planoFundo.altura
     );
+  },
+  atualizar() {
+    planoFundoX -= 1;
+    if (planoFundoX <= -planoFundo.largura) {
+      planoFundoX = 0;
+  };
   }
-};
+}
 
 const inicio = {
   spriteX: 125,
@@ -104,9 +120,10 @@ const tubos = {
   spriteY: 168,
   largura: 53,
   altura: 300,
-  espaco: 150,
+  espaco: 160,
   x: 220,
   y: 0, 
+  velocidade: 2,
   desenhatubos() {
     contexto.drawImage(
       sprites,
@@ -122,6 +139,13 @@ const tubos = {
       tubos.x, tubos.y + tubos.altura + tubos.espaco,
       tubos.largura, canvas.height - (tubos.y + tubos.altura + tubos.espaco)
     );
+  },
+  atualizar() {
+    tubos.x -= tubos.velocidade; 
+    if (tubos.x <= -tubos.largura) {
+      tubos.x = canvas.width;
+      tubos.y = Math.floor(Math.random() * (canvas.height - tubos.espaco - tubos.altura)); 
+    }
   },
   colisaoComFlappyBird() {
     if (
@@ -154,7 +178,7 @@ const start = {
 };
 
 const gameOver = {
-  spriteX: 140,
+  spriteX: 135,
   spriteY: 154,
   largura: 250,
   altura: 239,
@@ -189,6 +213,9 @@ const TelaJogo = {
     planoFundo.desenhafundo();
     chao.desenhachao();
     tubos.desenhatubos();
+    chao.atualizar();
+    planoFundo.atualizar();
+    tubos.atualizar();
     flappyBird.desenha();
     flappyBird.atualiza();
     if (tubos.colisaoComFlappyBird()) {
@@ -206,13 +233,13 @@ const Telafinal = {
     gameOver.desenhaover();
     chao.desenhachao();
     flappyBird.desenha();
-    start.desenhastart();
   },
   click() {
     telaAtiva = TelaJogo;
     flappyBird.y = 50;
     flappyBird.velocidade = 0;
     tubos.x = 220;
+    tubos.y = 0;
   }
 };
 
