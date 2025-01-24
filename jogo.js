@@ -1,5 +1,7 @@
 const sprites = new Image();
 sprites.src = './sprites.png';
+const som_punch = new Audio();
+som_punch.src = './punch.wav'
 
 const canvas = document.querySelector('#game-canvas');
 const contexto = canvas.getContext('2d');
@@ -17,6 +19,7 @@ const flappyBird = {
   y: 50,
   gravidade: 0.25,
   velocidade: 0,
+  pula: 4.6,
   desenha() {
     contexto.drawImage(
       sprites,
@@ -27,13 +30,19 @@ const flappyBird = {
     );
   },
   atualiza() {
+    if (colisaochao()){
+      som_punch.play();
+      telaAtiva = Telafinal;
+      return;
+    }
     flappyBird.velocidade += flappyBird.gravidade;
     flappyBird.y += flappyBird.velocidade;
   },
   voar() {
-    flappyBird.velocidade = -6;
+    flappyBird.velocidade = -flappyBird.pula;
   }
 };
+
 
 const chao = {
   spriteX: 0,
@@ -120,7 +129,7 @@ const tubos = {
   spriteY: 168,
   largura: 53,
   altura: 300,
-  espaco: 160,
+  espaco: 150,
   x: 220,
   y: 0, 
   velocidade: 2,
@@ -235,8 +244,8 @@ const Telafinal = {
     flappyBird.desenha();
   },
   click() {
-    telaAtiva = TelaJogo;
     flappyBird.y = 50;
+    telaAtiva = TelaJogo;
     flappyBird.velocidade = 0;
     tubos.x = 220;
     tubos.y = 0;
@@ -250,6 +259,15 @@ function mudaTelaAtiva() {
 }
 
 window.addEventListener("click", mudaTelaAtiva);
+
+function colisaochao(){
+  if (flappyBird.y + flappyBird.altura >= chao.y || flappyBird.y < 0){
+    telaAtiva = Telafinal;
+    return true;
+  }
+  else{
+  return false;}
+}
 
 function loop() {
   contexto.fillStyle = '#70c5ce';
