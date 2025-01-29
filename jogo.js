@@ -3,6 +3,10 @@ sprites.src = './sprites.png';
 const som_punch = new Audio();
 som_punch.src = './punch.wav'
 
+let animation_frame = 0;
+var count = 0;
+let elemento = document.getElementById('contador')
+
 const canvas = document.querySelector('#game-canvas');
 const contexto = canvas.getContext('2d');
 
@@ -20,6 +24,13 @@ const flappyBird = {
   gravidade: 0.25,
   velocidade: 0,
   pula: 4.6,
+  movimentos: [
+    {spriteX: 0, spriteY: 0,},
+    {spriteX: 0, spriteY: 26,},
+    {spriteX: 0, spriteY: 52,},
+    {spriteX: 0, spriteY: 26,},
+  ],
+  frameAtual: 0,
   desenha() {
     contexto.drawImage(
       sprites,
@@ -37,10 +48,18 @@ const flappyBird = {
     }
     flappyBird.velocidade += flappyBird.gravidade;
     flappyBird.y += flappyBird.velocidade;
+    flappyBird.atualizaFrame();
   },
   voar() {
     flappyBird.velocidade = -flappyBird.pula;
-  }
+  },
+  atualizaFrame(){
+    if ((animation_frame % 10) ===  0){
+    flappyBird.frameAtual = flappyBird.frameAtual + 1;
+    flappyBird.frameAtual = flappyBird.frameAtual % flappyBird.movimentos.length;
+    flappyBird.spriteX = flappyBird.movimentos[flappyBird.frameAtual].spriteX;
+    flappyBird.spriteY = flappyBird.movimentos[flappyBird.frameAtual].spriteY;
+  }}
 };
 
 
@@ -68,10 +87,8 @@ const chao = {
     );
   },
   atualizar() {
-    chaoX -= 2;
-    if (chaoX <= -chao.largura) {
-      chaoX = 0; 
-    }
+    chao.x = chao.x - 1;
+    chao.x = chao.x % (chao.largura / 2);
   }
 };
 
@@ -82,6 +99,7 @@ const planoFundo = {
   altura: 204,
   x: 0,
   y: 177,
+  velocidade: 0.5,
   desenhafundo() {
     contexto.drawImage(
       sprites,
@@ -99,7 +117,7 @@ const planoFundo = {
     );
   },
   atualizar() {
-    planoFundoX -= 1;
+    planoFundoX -= planoFundo.velocidade;
     if (planoFundoX <= -planoFundo.largura) {
       planoFundoX = 0;
   };
@@ -162,6 +180,7 @@ const tubos = {
       flappyBird.x < tubos.x + tubos.largura &&
       (flappyBird.y < tubos.altura || flappyBird.y + flappyBird.altura > tubos.y + tubos.altura + tubos.espaco)
     ) {
+      som_punch.play();
       return true;
     }
     return false; 
@@ -204,6 +223,7 @@ const gameOver = {
   }
 };
 
+
 const TelaInicio = {
   desenha() {
     planoFundo.desenhafundo();
@@ -214,6 +234,8 @@ const TelaInicio = {
   },
   click() {
     telaAtiva = TelaJogo;
+    count = 0;
+    elemento.innerHTML = count;
   }
 };
 
@@ -233,7 +255,7 @@ const TelaJogo = {
   },
   click() {
     flappyBird.voar();
-  }
+  },
 };
 
 const Telafinal = {
@@ -242,6 +264,8 @@ const Telafinal = {
     gameOver.desenhaover();
     chao.desenhachao();
     flappyBird.desenha();
+    count = 0;
+    elemento.innerHTML = count;
   },
   click() {
     flappyBird.y = 50;
@@ -269,11 +293,21 @@ function colisaochao(){
   return false;}
 }
 
+function atualizaContador(){
+  if (telaAtiva === TelaJogo){
+    count++;
+    elemento.innerHTML = count;
+  }
+}
+
+setInterval(atualizaContador, 1000);
+
 function loop() {
   contexto.fillStyle = '#70c5ce';
   contexto.fillRect(0, 0, canvas.width, canvas.height);
   telaAtiva.desenha();
   requestAnimationFrame(loop);
+  animation_frame++;
 }
 
 loop();
