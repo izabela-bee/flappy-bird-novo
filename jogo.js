@@ -6,6 +6,7 @@ som_punch.src = './punch.wav'
 let animation_frame = 0;
 var count = 0;
 let elemento = document.getElementById('contador')
+let pontuacao = document.getElementById('score')
 
 const canvas = document.querySelector('#game-canvas');
 const contexto = canvas.getContext('2d');
@@ -21,7 +22,7 @@ const flappyBird = {
   altura: 25,
   x: 10,
   y: 50,
-  gravidade: 0.25,
+  gravidade: 0.18,
   velocidade: 0,
   pula: 4.6,
   movimentos: [
@@ -146,9 +147,9 @@ const tubos = {
   spriteX: 0,
   spriteY: 168,
   largura: 53,
-  altura: 300,
+  altura: 270,
   espaco: 150,
-  x: 220,
+  x: 240,
   y: 0, 
   velocidade: 2,
   desenhatubos() {
@@ -181,6 +182,7 @@ const tubos = {
       (flappyBird.y < tubos.altura || flappyBird.y + flappyBird.altura > tubos.y + tubos.altura + tubos.espaco)
     ) {
       som_punch.play();
+      pontuacao.style.display = 'block';
       return true;
     }
     return false; 
@@ -211,7 +213,7 @@ const gameOver = {
   largura: 250,
   altura: 239,
   x: 53,
-  y: 150,
+  y: 130,
   desenhaover() {
     contexto.drawImage(
       sprites,
@@ -225,6 +227,7 @@ const gameOver = {
 
 
 const TelaInicio = {
+  pontuacaostyledisplay:'none',
   desenha() {
     planoFundo.desenhafundo();
     chao.desenhachao();
@@ -236,10 +239,12 @@ const TelaInicio = {
     telaAtiva = TelaJogo;
     count = 0;
     elemento.innerHTML = count;
+    pontuacao.innerHTML = count;
   }
 };
 
 const TelaJogo = {
+  pontuacaostyledisplay:'none',
   desenha() {
     planoFundo.desenhafundo();
     chao.desenhachao();
@@ -250,7 +255,9 @@ const TelaJogo = {
     flappyBird.desenha();
     flappyBird.atualiza();
     if (tubos.colisaoComFlappyBird()) {
-      telaAtiva = Telafinal; 
+      telaAtiva = Telafinal;
+      pontuacao.style.display = 'block';
+      elemento.style.display = 'none';
     }
   },
   click() {
@@ -259,13 +266,14 @@ const TelaJogo = {
 };
 
 const Telafinal = {
+  elementostyledisplay:'none',
+  pontuacaostyledisplay:'block',
   desenha() {
     planoFundo.desenhafundo();
     gameOver.desenhaover();
     chao.desenhachao();
     flappyBird.desenha();
-    count = 0;
-    elemento.innerHTML = count;
+    pontuacao.innerHTML = count;
   },
   click() {
     flappyBird.y = 50;
@@ -273,6 +281,10 @@ const Telafinal = {
     flappyBird.velocidade = 0;
     tubos.x = 220;
     tubos.y = 0;
+    count = 0;
+    elemento.innerHTML = count;
+    pontuacao.innerHTML = count;
+    pontuacao.style.display = 'none';
   }
 };
 
@@ -287,9 +299,12 @@ window.addEventListener("click", mudaTelaAtiva);
 function colisaochao(){
   if (flappyBird.y + flappyBird.altura >= chao.y || flappyBird.y < 0){
     telaAtiva = Telafinal;
+    pontuacao.style.display = 'block';
+    elemento.style.display = 'none';
     return true;
   }
   else{
+    elemento.style.display = 'block';
   return false;}
 }
 

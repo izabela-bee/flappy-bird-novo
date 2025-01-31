@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,19 +7,46 @@
 </head>
 <body>
     <canvas id="game-canvas" width="320" height="480"></canvas>
-    <div id="contador">Contador: </div>
+    <div id="contador"> </div>
+    <div id="score"> </div>
     <style>
+        @font-face {
+          font-family: fonte;
+          src: url(flappy-bird-font.otf);
+        }
         body {
           min-height: 100vh;
           display: flex;
           justify-content: center;
           align-items: center;
+          flex-direction: column-reverse;
+          position: relative;
         }
         canvas {
           border: 1px solid #000;
           display: block;
           margin: 0 auto;
         }
+        #contador{
+          font-size: 25px;
+          margin-bottom: -35px;
+          top: 10px; 
+          left: 50%; 
+          transform: translateX(-50%); 
+          z-index: 10; 
+          font-family: fonte;
+        }
+        #score{
+          font-size: 15px;
+          font-family: fonte;
+          top: 47%; 
+          left: 55%;
+          position: absolute;
+          transform: translate(-50%, -50%);
+          z-index: 15; 
+          display: none;
+        }
+        
     </style>
 
     <script src="./jogo.js"></script>
