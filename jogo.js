@@ -144,11 +144,10 @@ const inicio = {
 };
 
 const tubos = {
-  
   largura: 53,
   altura: 270,
   ceu: {
-    spriteX: 0,
+    spriteX: 52,
     spriteY: 168,
     x: 240,
     y: 0, 
@@ -160,29 +159,29 @@ const tubos = {
   
   velocidade: 2,
   pares: [],
-  espacamento: 120,
+  espacamento: 100,
   desenhatubos() {
-    const espacamento = 120
+    const espacamento = 100
     for (i=0;i<tubos.pares.length;i++){
       tubos.ceu.x = tubos.pares[i].x;
       tubos.ceu.y = tubos.pares[i].y;
+      contexto.drawImage(
+        sprites,
+        tubos.ceu.spriteX, tubos.ceu.spriteY,
+        tubos.largura, tubos.altura,
+        tubos.ceu.x, tubos.ceu.y,
+        tubos.largura, tubos.altura
+        );
+        const canochaox = tubos.ceu.x;
+        const canochaoy = tubos.altura + espacamento + tubos.ceu.y;
+        contexto.drawImage(
+          sprites,
+          tubos.chao.spriteX, tubos.chao.spriteY,
+          tubos.largura, tubos.altura,
+          canochaox, canochaoy,
+          tubos.largura, tubos.altura
+          );
     }
-    contexto.drawImage(
-      sprites,
-      tubos.ceu.spriteX, tubos.ceu.spriteY,
-      tubos.largura, tubos.altura,
-      tubos.ceu.x, tubos.ceu.y,
-      tubos.largura, tubos.altura
-    );
-    const canochaox = tubos.ceu.x;
-    const canochaoy = tubos.altura + espacamento + tubos.ceu.y;
-    contexto.drawImage(
-      sprites,
-      tubos.chao.spriteX, tubos.chao.spriteY,
-      tubos.largura, tubos.altura,
-      canochaox, canochaoy,
-      tubos.largura, tubos.altura
-    );
   },
   atualizar() {
     tubos.ceu.x -= 2; 
@@ -194,17 +193,17 @@ const tubos = {
       }
       tubos.pares.push(novopar);
     }
-    for (i=0;i<tubos.pares.length;i++){
+    for (i = 0; i < tubos.pares.length; i++) {
       const par = tubos.pares[i];
       par.x -= 2;
-    }
-    if(par.x + tubos.largura <= 0){
+      if (fazcolisaocomobstaculo(par)) {
+        som_punch.play();
+        telaAtiva = Telafinal;
+        return;
+      }
+      if(par.x + tubos.largura <= 0){
       tubos.pares.shift();
     }
-    if (fazcolisaocomobstaculo(par)){
-      som_punch.play();
-      telaAtiva = TelaInicio;
-      return;
     }
   },
   colisaoComFlappyBird() {
@@ -260,6 +259,7 @@ const gameOver = {
 
 const TelaInicio = {
   pontuacaostyledisplay:'none',
+  elementostyledisplay:'none',
   desenha() {
     planoFundo.desenhafundo();
     chao.desenhachao();
@@ -348,11 +348,11 @@ function atualizaContador(){
 }
 
 function fazcolisaocomobstaculo(par){
-  if(flappyBird.x >= par.x){
     const alturacabecaflappybird = flappyBird.y;
     const alturapeflappybird = flappyBird.y + flappyBird.altura;
     const bocacanoceuy = par.y + tubos.altura;
     const bocacanochaoy = par.y + tubos.altura + tubos.espacamento;
+    if (flappyBird.x + flappyBird.largura > par.x && flappyBird.x < par.x + tubos.largura) {
     if (alturacabecaflappybird <= bocacanoceuy){
       return true;
     }
