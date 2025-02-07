@@ -197,6 +197,8 @@ const tubos = {
       const par = tubos.pares[i];
       par.x -= 2;
       if (fazcolisaocomobstaculo(par)) {
+        pontuacao.style.display = 'block';
+        elemento.style.display = 'none';
         som_punch.play();
         telaAtiva = Telafinal;
         return;
@@ -206,18 +208,6 @@ const tubos = {
     }
     }
   },
-  colisaoComFlappyBird() {
-    if (
-      flappyBird.x + flappyBird.largura > tubos.x &&
-      flappyBird.x < tubos.x + tubos.largura &&
-      (flappyBird.y < tubos.altura || flappyBird.y + flappyBird.altura > tubos.y + tubos.altura + tubos.espaco)
-    ) {
-      som_punch.play();
-      pontuacao.style.display = 'block';
-      return true;
-    }
-    return false; 
-  }
 };
 
 const start = {
@@ -286,11 +276,6 @@ const TelaJogo = {
     tubos.atualizar();
     flappyBird.desenha();
     flappyBird.atualiza();
-    if (tubos.colisaoComFlappyBird()) {
-      telaAtiva = Telafinal;
-      pontuacao.style.display = 'block';
-      elemento.style.display = 'none';
-    }
   },
   click() {
     flappyBird.voar();
@@ -298,6 +283,7 @@ const TelaJogo = {
 };
 
 const Telafinal = {
+  pares: [],
   elementostyledisplay:'none',
   pontuacaostyledisplay:'block',
   desenha() {
@@ -308,8 +294,8 @@ const Telafinal = {
     pontuacao.innerHTML = count;
   },
   click() {
+    tubos.pares.shift();
     flappyBird.y = 50;
-    telaAtiva = TelaJogo;
     flappyBird.velocidade = 0;
     tubos.x = 220;
     tubos.y = 0;
@@ -317,6 +303,7 @@ const Telafinal = {
     elemento.innerHTML = count;
     pontuacao.innerHTML = count;
     pontuacao.style.display = 'none';
+    telaAtiva = TelaJogo;
   }
 };
 
@@ -329,7 +316,7 @@ function mudaTelaAtiva() {
 window.addEventListener("click", mudaTelaAtiva);
 
 function colisaochao(){
-  if (flappyBird.y + flappyBird.altura >= chao.y || flappyBird.y < 0){
+  if (flappyBird.y + flappyBird.altura >= chao.y){
     telaAtiva = Telafinal;
     pontuacao.style.display = 'block';
     elemento.style.display = 'none';
@@ -337,7 +324,8 @@ function colisaochao(){
   }
   else{
     elemento.style.display = 'block';
-  return false;}
+  return false;
+}
 }
 
 function atualizaContador(){
@@ -353,13 +341,13 @@ function fazcolisaocomobstaculo(par){
     const bocacanoceuy = par.y + tubos.altura;
     const bocacanochaoy = par.y + tubos.altura + tubos.espacamento;
     if (flappyBird.x + flappyBird.largura > par.x && flappyBird.x < par.x + tubos.largura) {
-    if (alturacabecaflappybird <= bocacanoceuy){
-      return true;
+      if (alturacabecaflappybird <= bocacanoceuy){
+        return true;
+      }
+      if (alturapeflappybird >= bocacanochaoy){
+        return true;
+      }
     }
-    if (alturapeflappybird <= bocacanochaoy){
-      return true;
-    }
-  }
   return false;
 }
 
